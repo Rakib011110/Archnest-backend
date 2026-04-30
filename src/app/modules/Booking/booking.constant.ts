@@ -1,0 +1,2 @@
+export const BOOKING_STATUS = { PENDING: 'PENDING', CONFIRMED: 'CONFIRMED', CANCELLED: 'CANCELLED', COMPLETED: 'COMPLETED' } as const;
+export type TBookingStatus = keyof typeof BOOKING_STATUS;

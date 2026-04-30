@@ -1,0 +1,34 @@
+[
+  {
+    "_id": { "$oid": "65f600000000000000000001" },
+    "title": "Genuine Medicines Delivered Fast",
+    "imageUrl": "https://images.unsplash.com/photo-1584308666744-24d5c474f2ae?auto=format&fit=crop&w=1600&q=80",
+    "altText": "Pharmacy medicine banner",
+    "isActive": true,
+    "order": 1
+  },
+  {
+    "_id": { "$oid": "65f600000000000000000002" },
+    "title": "Upload Prescription and Save",
+    "imageUrl": "https://images.unsplash.com/photo-1579165466741-7f35e4755183?auto=format&fit=crop&w=1600&q=80",
+    "altText": "Prescription upload banner",
+    "isActive": true,
+    "order": 2
+  },
+  {
+    "_id": { "$oid": "65f600000000000000000003" },
+    "title": "100% Authentic Medicines",
+    "imageUrl": "https://images.unsplash.com/photo-1585435557343-3b092031a831?auto=format&fit=crop&w=1600&q=80",
+    "altText": "Authentic medicine banner",
+    "isActive": true,
+    "order": 3
+  },
+  {
+    "_id": { "$oid": "65f600000000000000000004" },
+    "title": "Doctor Recommended Healthcare",
+    "imageUrl": "https://images.unsplash.com/photo-1581595219315-a187dd40c322?auto=format&fit=crop&w=1600&q=80",
+    "altText": "Healthcare product banner",
+    "isActive": true,
+    "order": 4
+  }
+]
