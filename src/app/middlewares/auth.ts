@@ -200,6 +200,9 @@ export const requireAuth = auth();
 /** Admin only */
 export const requireAdmin = auth(USER_ROLE.ADMIN);
 
+/** Admin or Editor */
+export const requireEditor = auth(USER_ROLE.ADMIN, USER_ROLE.EDITOR);
+
 /**
  * Middleware to check if user owns the resource or is admin
  */

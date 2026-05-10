@@ -12,6 +12,7 @@
 
 export const USER_ROLE = {
   ADMIN: 'ADMIN',
+  EDITOR: 'EDITOR',
   USER: 'USER',
 } as const;
 
@@ -20,7 +21,8 @@ export type TUserRole = keyof typeof USER_ROLE;
 // Role hierarchy (higher number = more permissions)
 export const ROLE_HIERARCHY: Record<TUserRole, number> = {
   USER: 1,
-  ADMIN: 2,
+  EDITOR: 2,
+  ADMIN: 3,
 };
 
 // ─────────────────────────────────────────────────────────────────────────────

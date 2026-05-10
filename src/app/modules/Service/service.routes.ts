@@ -18,21 +18,21 @@ router.get('/:id', ServiceController.getServiceById);
 // Admin routes
 router.post(
   '/',
-  auth(USER_ROLE.ADMIN),
+  auth(USER_ROLE.ADMIN, USER_ROLE.EDITOR),
   uploadServiceImage.single('heroImage'),
   ServiceController.createService
 );
 
 router.patch(
   '/:id',
-  auth(USER_ROLE.ADMIN),
+  auth(USER_ROLE.ADMIN, USER_ROLE.EDITOR),
   uploadServiceImage.single('heroImage'),
   ServiceController.updateService
 );
 
 router.delete(
   '/:id',
-  auth(USER_ROLE.ADMIN),
+  auth(USER_ROLE.ADMIN, USER_ROLE.EDITOR),
   ServiceController.deleteService
 );
 

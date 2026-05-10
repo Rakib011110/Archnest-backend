@@ -18,15 +18,21 @@ router.get('/:id', ProjectController.getProjectById);
 // Admin
 router.post(
   '/',
-  auth(USER_ROLE.ADMIN),
-  uploadProjectImages.single('heroImage'),
+  auth(USER_ROLE.ADMIN, USER_ROLE.EDITOR),
+  uploadProjectImages.fields([
+    { name: 'heroImage', maxCount: 1 },
+    { name: 'galleryImages', maxCount: 20 }
+  ]),
   ProjectController.createProject
 );
 
 router.patch(
   '/:id',
-  auth(USER_ROLE.ADMIN),
-  uploadProjectImages.single('heroImage'),
+  auth(USER_ROLE.ADMIN, USER_ROLE.EDITOR),
+  uploadProjectImages.fields([
+    { name: 'heroImage', maxCount: 1 },
+    { name: 'galleryImages', maxCount: 20 }
+  ]),
   ProjectController.updateProject
 );
 

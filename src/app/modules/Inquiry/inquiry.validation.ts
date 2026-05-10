@@ -15,7 +15,7 @@ export const createInquiryValidation = z.object({
 
 export const updateInquiryValidation = z.object({
   body: z.object({
-    status: z.enum(['NEW', 'CONTACTED', 'IN_PROGRESS', 'CLOSED']).optional(),
+    status: z.enum(['NEW', 'CONTACTED', 'PROPOSAL_SENT', 'WON', 'LOST', 'IN_PROGRESS', 'CLOSED']).optional(),
     internalNotes: z.string().optional(),
     assignedTo: z.string().optional(),
   }),

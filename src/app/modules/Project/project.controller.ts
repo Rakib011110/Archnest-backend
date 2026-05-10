@@ -9,17 +9,36 @@ import { ProjectServices } from './project.services';
 // ============================================================================
 
 const createProject = catchAsync(async (req: Request, res: Response) => {
-  // Handle hero image from single upload
-  if (req.file) {
-    req.body.heroImage = `/uploads/projects/${req.file.filename}`;
+  const files = req.files as { [fieldname: string]: Express.Multer.File[] } | undefined;
+
+  // Handle hero image
+  if (files?.heroImage?.[0]) {
+    req.body.heroImage = `/uploads/projects/${files.heroImage[0].filename}`;
   }
-  // Handle gallery images from multi-upload
-  if (req.files && Array.isArray(req.files)) {
-    req.body.images = req.files.map((f: Express.Multer.File, i: number) => ({
-      url: `/uploads/projects/${f.filename}`,
-      altText: '',
-      order: i,
-    }));
+
+  // Handle gallery images
+  if (files?.galleryImages?.length) {
+    // If frontend sends metadata as JSON string (e.g. order, isBefore)
+    let imagesMeta: any[] = [];
+    if (req.body.images && typeof req.body.images === 'string') {
+      try {
+        imagesMeta = JSON.parse(req.body.images);
+      } catch (e) {
+        imagesMeta = [];
+      }
+    } else if (Array.isArray(req.body.images)) {
+      imagesMeta = req.body.images;
+    }
+
+    req.body.images = files.galleryImages.map((f: Express.Multer.File, i: number) => {
+      const meta = imagesMeta[i] || {};
+      return {
+        url: `/uploads/projects/${f.filename}`,
+        altText: meta.altText || '',
+        isBefore: meta.isBefore || false,
+        order: meta.order ?? i,
+      };
+    });
   }
 
   const result = await ProjectServices.createProject(req.body);
@@ -63,8 +82,42 @@ const getProjectById = catchAsync(async (req: Request, res: Response) => {
 });
 
 const updateProject = catchAsync(async (req: Request, res: Response) => {
-  if (req.file) {
-    req.body.heroImage = `/uploads/projects/${req.file.filename}`;
+  const files = req.files as { [fieldname: string]: Express.Multer.File[] } | undefined;
+
+  // Handle hero image
+  if (files?.heroImage?.[0]) {
+    req.body.heroImage = `/uploads/projects/${files.heroImage[0].filename}`;
+  }
+
+  // Handle gallery images
+  let existingImages: any[] = [];
+  if (req.body.images && typeof req.body.images === 'string') {
+    try {
+      existingImages = JSON.parse(req.body.images);
+    } catch (e) {
+      existingImages = [];
+    }
+  } else if (Array.isArray(req.body.images)) {
+    existingImages = req.body.images;
+  }
+
+  if (files?.galleryImages?.length) {
+    // New uploaded images
+    const newImages = files.galleryImages.map((f: Express.Multer.File, i: number) => {
+      // Find matching meta if frontend sent placeholder objects for new files
+      // We assume new files are appended to existingImages or mapped appropriately
+      // For simplicity, just append new files at the end
+      return {
+        url: `/uploads/projects/${f.filename}`,
+        altText: '',
+        isBefore: false,
+        order: existingImages.length + i,
+      };
+    });
+    req.body.images = [...existingImages, ...newImages];
+  } else if (req.body.images !== undefined) {
+    // Only metadata/ordering of existing images was updated
+    req.body.images = existingImages;
   }
 
   const result = await ProjectServices.updateProject(req.params.id, req.body);
