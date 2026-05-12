@@ -41,6 +41,13 @@ const parseJwtDurationToMs = (value?: string): number => {
 };
 
 const REFRESH_COOKIE_MAX_AGE_MS = parseJwtDurationToMs(config.jwt_refresh_expires_in);
+const ACCESS_COOKIE_MAX_AGE_MS = parseJwtDurationToMs(config.jwt_access_expires_in);
+
+const BASE_COOKIE_OPTIONS = {
+  secure: config.NODE_ENV === 'production',
+  httpOnly: true,
+  sameSite: 'strict' as const,
+};
 
 /**
  * AuthController Class
@@ -60,18 +67,18 @@ class AuthController extends BaseController {
     const { refreshToken, accessToken } = result;
 
     // Set secure HTTP-only cookies
+    res.cookie('accessToken', accessToken, {
+      ...BASE_COOKIE_OPTIONS,
+      maxAge: ACCESS_COOKIE_MAX_AGE_MS,
+    });
     res.cookie('refreshToken', refreshToken, {
-      secure: config.NODE_ENV === 'production',
-      httpOnly: true,
-      sameSite: 'strict',
+      ...BASE_COOKIE_OPTIONS,
       maxAge: REFRESH_COOKIE_MAX_AGE_MS,
     });
 
     return this.sendCreated(
       res,
       {
-        accessToken,
-        refreshToken,
         user: result.user,
       },
       'User registered successfully! Please check your email to verify your account.'
@@ -87,18 +94,18 @@ class AuthController extends BaseController {
     const { refreshToken, accessToken } = result;
 
     // Set secure HTTP-only cookies
+    res.cookie('accessToken', accessToken, {
+      ...BASE_COOKIE_OPTIONS,
+      maxAge: ACCESS_COOKIE_MAX_AGE_MS,
+    });
     res.cookie('refreshToken', refreshToken, {
-      secure: config.NODE_ENV === 'production',
-      httpOnly: true,
-      sameSite: 'strict',
+      ...BASE_COOKIE_OPTIONS,
       maxAge: REFRESH_COOKIE_MAX_AGE_MS,
     });
 
     return this.sendSuccess(
       res,
       {
-        accessToken,
-        refreshToken,
         user: result.user,
       },
       'User logged in successfully!'
@@ -110,7 +117,9 @@ class AuthController extends BaseController {
   // ========================================================================
 
   logout = catchAsync(async (req: Request, res: Response, _next: NextFunction) => {
-    const token = req.headers.authorization?.replace('Bearer ', '');
+    const headerToken = req.headers.authorization?.replace('Bearer ', '');
+    const cookieToken = req.cookies?.accessToken as string | undefined;
+    const token = headerToken || cookieToken;
 
     // Add token to blacklist if it exists
     if (token) {
@@ -118,11 +127,8 @@ class AuthController extends BaseController {
     }
 
     // Clear cookies
-    res.clearCookie('refreshToken', {
-      httpOnly: true,
-      secure: config.NODE_ENV === 'production',
-      sameSite: 'strict',
-    });
+    res.clearCookie('accessToken', BASE_COOKIE_OPTIONS);
+    res.clearCookie('refreshToken', BASE_COOKIE_OPTIONS);
 
     return this.sendSuccess(res, null, 'Logged out successfully!');
   });
@@ -154,7 +160,22 @@ class AuthController extends BaseController {
     }
 
     const result = await AuthServices.refreshToken(token);
-    return this.sendSuccess(res, result, 'Access token retrieved successfully!');
+
+    if (result?.accessToken) {
+      res.cookie('accessToken', result.accessToken, {
+        ...BASE_COOKIE_OPTIONS,
+        maxAge: ACCESS_COOKIE_MAX_AGE_MS,
+      });
+    }
+
+    if ((result as { refreshToken?: string })?.refreshToken) {
+      res.cookie('refreshToken', (result as { refreshToken?: string }).refreshToken as string, {
+        ...BASE_COOKIE_OPTIONS,
+        maxAge: REFRESH_COOKIE_MAX_AGE_MS,
+      });
+    }
+
+    return this.sendSuccess(res, { refreshed: true }, 'Access token retrieved successfully!');
   });
 
   // ========================================================================

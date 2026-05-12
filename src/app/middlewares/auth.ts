@@ -61,7 +61,9 @@ const clearFailedAuthAttempts = (req: Request): void => {
  */
 const auth = (...requiredRoles: TUserRole[]) => {
   return catchAsync(async (req: Request, _res: Response, next: NextFunction) => {
-    let token = req.headers.authorization;
+    const headerToken = req.headers.authorization;
+    const cookieToken = req.cookies?.accessToken as string | undefined;
+    let token = headerToken || (cookieToken ? `Bearer ${cookieToken}` : undefined);
 
     if (!token) {
       if (!recordFailedAuthAttempt(req)) {
@@ -144,7 +146,9 @@ const auth = (...requiredRoles: TUserRole[]) => {
  */
 export const optionalAuth = () => {
   return catchAsync(async (req: Request, _res: Response, next: NextFunction) => {
-    let token = req.headers.authorization;
+    const headerToken = req.headers.authorization;
+    const cookieToken = req.cookies?.accessToken as string | undefined;
+    let token = headerToken || (cookieToken ? `Bearer ${cookieToken}` : undefined);
 
     if (!token) {
       return next();

@@ -3,6 +3,7 @@ import { UserRoutes } from "../app/modules/User/user.routes";
 import { AuthRoutes } from "../app/modules/auth/auth.routes";
 import { BannerRoutes } from "../app/modules/Banner/banner.routes";
 import { ServiceRoutes } from "../app/modules/Service/service.routes";
+import { CategoryRoutes } from "../app/modules/Category/category.routes";
 import { ProjectRoutes } from "../app/modules/Project/project.routes";
 import { GalleryRoutes } from "../app/modules/Gallery/gallery.routes";
 import { BlogRoutes } from "../app/modules/Blog/blog.routes";
@@ -30,6 +31,7 @@ const moduleRoutes = [
 
   // ── Phase 1: Foundation ──
   { path: "/services", route: ServiceRoutes },
+  { path: "/categories", route: CategoryRoutes },
   { path: "/projects", route: ProjectRoutes },
 
   // ── Phase 2: Content & Social Proof ──
