@@ -5,8 +5,8 @@ import { INQUIRY_STATUS } from './inquiry.constant';
 const inquirySchema = new Schema<TInquiry, IInquiryModel>(
   {
     projectType: { type: String, required: true },
-    market: { type: String, required: true },
-    budgetRange: { type: String, required: true },
+    market: { type: String },
+    budgetRange: { type: String },
     name: { type: String, required: true, trim: true },
     email: { type: String, required: true, lowercase: true },
     phone: { type: String },

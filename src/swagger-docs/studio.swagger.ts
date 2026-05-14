@@ -48,7 +48,8 @@
  *         name: { type: string }
  *         email: { type: string }
  *         projectType: { type: string }
- *         budgetRange: { type: string }
+ *         market: { type: string, description: "Optional" }
+ *         budgetRange: { type: string, description: "Optional" }
  *         message: { type: string }
  *         status: { type: string, enum: [NEW, CONTACTED, IN_PROGRESS, CLOSED] }
  * 
@@ -70,6 +71,7 @@
  *               name: { type: string }
  *               email: { type: string }
  *               projectType: { type: string }
+ *               market: { type: string }
  *               budgetRange: { type: string }
  *               message: { type: string }
  *               files:
