@@ -1,6 +1,6 @@
 import { Schema, model } from 'mongoose';
 import { IBookingModel, IBookingSlotModel, TBooking, TBookingSlot } from './booking.interface';
-import { BOOKING_STATUS } from './booking.constant';
+import { BOOKING_MEETING_TYPE, BOOKING_STATUS } from './booking.constant';
 
 const bookingSchema = new Schema<TBooking, IBookingModel>(
   {
@@ -12,6 +12,8 @@ const bookingSchema = new Schema<TBooking, IBookingModel>(
     endTime: { type: String, required: true },
     timezone: { type: String, required: true, default: 'Asia/Dhaka' },
     notes: { type: String },
+    meetingType: { type: String, enum: Object.values(BOOKING_MEETING_TYPE) },
+    meetingLocation: { type: String, trim: true },
     status: { type: String, enum: Object.values(BOOKING_STATUS), default: BOOKING_STATUS.PENDING },
   },
   { timestamps: true }

@@ -1,5 +1,5 @@
 import { Model, Types } from 'mongoose';
-import { TBookingStatus } from './booking.constant';
+import { TBookingMeetingType, TBookingStatus } from './booking.constant';
 
 export interface TBooking {
   _id?: Types.ObjectId;
@@ -11,6 +11,8 @@ export interface TBooking {
   endTime: string;
   timezone: string;
   notes?: string;
+  meetingType?: TBookingMeetingType;
+  meetingLocation?: string;
   status: TBookingStatus;
   createdAt?: Date;
   updatedAt?: Date;

@@ -2,6 +2,8 @@ import httpStatus from 'http-status';
 import { TBooking, TBookingSlot } from './booking.interface';
 import { Booking, BookingSlot } from './booking.model';
 import AppError from '../../error/AppError';
+import { BOOKING_STATUS } from './booking.constant';
+import { sendBookingConfirmationEmail } from '../../utils/bookingEmail';
 
 // ── Booking CRUD ──
 const createBooking = async (payload: Partial<TBooking>): Promise<TBooking> => Booking.create(payload);
@@ -26,8 +28,40 @@ const getBookingById = async (id: string): Promise<TBooking> => {
 };
 
 const updateBooking = async (id: string, payload: Partial<TBooking>): Promise<TBooking> => {
+  const existing = await Booking.findById(id);
+  if (!existing) throw new AppError(httpStatus.NOT_FOUND, 'Booking not found');
+
   const r = await Booking.findByIdAndUpdate(id, payload, { new: true, runValidators: true });
   if (!r) throw new AppError(httpStatus.NOT_FOUND, 'Booking not found');
+
+  const statusChangedToConfirmed =
+    payload.status === BOOKING_STATUS.CONFIRMED && existing.status !== BOOKING_STATUS.CONFIRMED;
+
+  if (statusChangedToConfirmed) {
+    const reference = r._id?.toString().slice(-6).toUpperCase() || 'BOOKING';
+    const dateLabel = new Date(r.date).toLocaleDateString('en-GB', {
+      day: '2-digit',
+      month: 'short',
+      year: 'numeric',
+    });
+    const timeLabel = `${r.startTime} - ${r.endTime}`;
+
+    try {
+      await sendBookingConfirmationEmail(r.clientEmail, {
+        clientName: r.clientName,
+        reference,
+        dateLabel,
+        timeLabel,
+        timezone: r.timezone,
+        notes: r.notes,
+        meetingType: r.meetingType,
+        meetingLocation: r.meetingLocation,
+      });
+    } catch (error) {
+      console.error('Failed to send booking confirmation email', error);
+    }
+  }
+
   return r;
 };
 

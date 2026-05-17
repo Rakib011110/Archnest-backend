@@ -17,6 +17,8 @@ export const updateBookingValidation = z.object({
   body: z.object({
     status: z.enum(['PENDING', 'CONFIRMED', 'CANCELLED', 'COMPLETED']).optional(),
     notes: z.string().optional(),
+    meetingType: z.enum(['OFFICE', 'ONLINE']).optional(),
+    meetingLocation: z.string().max(500).optional(),
   }),
 });
 
