@@ -1,11 +1,9 @@
 import { Model, Types } from 'mongoose';
 
-export interface TSocialLinks {
-  linkedIn?: string;
-  facebook?: string;
-  instagram?: string;
-  behance?: string;
-  youtube?: string;
+export interface TProfile {
+  platform: string;
+  url: string;
+  iconUrl?: string;
 }
 
 export interface TTrustedByLogo {
@@ -24,7 +22,7 @@ export interface TSiteSettings {
   contactPhone: string;
   officeAddress: string;
   googleMapsEmbed?: string;
-  socialLinks: TSocialLinks;
+  profiles: TProfile[];
   statsProjects: number;
   statsCountries: number;
   statsYears: number;

@@ -8,7 +8,7 @@ const router = Router();
 
 router.get('/', GalleryController.getAllItems);
 router.get('/:id', GalleryController.getItemById);
-router.post('/', auth(USER_ROLE.ADMIN), uploadGalleryItem.single('file'), GalleryController.createItem);
+router.post('/', auth(USER_ROLE.ADMIN), uploadGalleryItem.array('files', 20), GalleryController.createItem);
 router.patch('/:id', auth(USER_ROLE.ADMIN), uploadGalleryItem.single('file'), GalleryController.updateItem);
 router.delete('/:id', auth(USER_ROLE.ADMIN), GalleryController.deleteItem);
 

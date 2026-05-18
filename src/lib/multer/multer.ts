@@ -121,7 +121,7 @@ export const uploadProjectImages = multer({
 export const uploadGalleryItem = multer({
   storage: createStorage(UPLOAD_DIRS.gallery, 'gallery'),
   fileFilter: imageFilter,
-  limits: { fileSize: 10 * 1024 * 1024 },
+  limits: { fileSize: 10 * 1024 * 1024, files: 20 },
 });
 
 /** Blog images — single image, 5MB */

@@ -11,13 +11,11 @@ export const updateSiteSettingsValidation = z.object({
     contactPhone: z.string().optional(),
     officeAddress: z.string().optional(),
     googleMapsEmbed: z.string().optional(),
-    socialLinks: z.object({
-      linkedIn: z.string().optional(),
-      facebook: z.string().optional(),
-      instagram: z.string().optional(),
-      behance: z.string().optional(),
-      youtube: z.string().optional(),
-    }).optional(),
+    profiles: z.array(z.object({
+      platform: z.string(),
+      url: z.string(),
+      iconUrl: z.string().optional(),
+    })).optional(),
     statsProjects: z.number().int().optional(),
     statsCountries: z.number().int().optional(),
     statsYears: z.number().int().optional(),

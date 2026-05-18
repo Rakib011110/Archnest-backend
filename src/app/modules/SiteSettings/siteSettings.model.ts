@@ -12,13 +12,11 @@ const siteSettingsSchema = new Schema<TSiteSettings, ISiteSettingsModel>(
     contactPhone: { type: String, default: '' },
     officeAddress: { type: String, default: '' },
     googleMapsEmbed: { type: String },
-    socialLinks: {
-      linkedIn: { type: String },
-      facebook: { type: String },
-      instagram: { type: String },
-      behance: { type: String },
-      youtube: { type: String },
-    },
+    profiles: [{
+      platform: { type: String, required: true },
+      url: { type: String, required: true },
+      iconUrl: { type: String },
+    }],
     statsProjects: { type: Number, default: 0 },
     statsCountries: { type: Number, default: 0 },
     statsYears: { type: Number, default: 0 },

@@ -3,11 +3,41 @@ import httpStatus from 'http-status';
 import { catchAsync } from '../../utils/catchAsync';
 import sendResponse from '../../utils/sendResponse';
 import { GalleryServices } from './gallery.services';
+import AppError from '../../error/AppError';
 
 const createItem = catchAsync(async (req: Request, res: Response) => {
-  if (req.file) req.body.url = `/uploads/gallery/${req.file.filename}`;
-  const result = await GalleryServices.createItem(req.body);
-  sendResponse(res, { statusCode: httpStatus.CREATED, success: true, message: 'Gallery item created', data: result });
+  const files = req.files as Express.Multer.File[];
+  
+  if (files && files.length > 0) {
+    const results = [];
+    for (const file of files) {
+      const itemData = {
+        ...req.body,
+        url: `/uploads/gallery/${file.filename}`,
+      };
+      const result = await GalleryServices.createItem(itemData);
+      results.push(result);
+    }
+    return sendResponse(res, { 
+      statusCode: httpStatus.CREATED, 
+      success: true, 
+      message: `${files.length} Gallery items created`, 
+      data: results 
+    });
+  } 
+  
+  // For video or virtual tour where no file is uploaded
+  if (req.body.type === 'VIDEO' || req.body.type === 'VIRTUAL_TOUR') {
+    const result = await GalleryServices.createItem(req.body);
+    return sendResponse(res, { 
+      statusCode: httpStatus.CREATED, 
+      success: true, 
+      message: 'Gallery item created', 
+      data: result 
+    });
+  }
+  
+  throw new AppError(httpStatus.BAD_REQUEST, 'Please upload at least one image file');
 });
 
 const getAllItems = catchAsync(async (req: Request, res: Response) => {
