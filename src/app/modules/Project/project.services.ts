@@ -10,6 +10,10 @@ import { PROJECT_SEARCHABLE_FIELDS } from './project.constant';
 // ============================================================================
 
 const createProject = async (payload: Partial<TProject>): Promise<TProject> => {
+  if (payload.category) {
+    payload.category = (payload.category as string).toUpperCase() as any;
+  }
+
   if (payload.title && !payload.slug) {
     payload.slug = generateSlug(payload.title);
   }
@@ -69,6 +73,10 @@ const getProjectById = async (id: string): Promise<TProject> => {
 };
 
 const updateProject = async (id: string, payload: Partial<TProject>): Promise<TProject> => {
+  if (payload.category) {
+    payload.category = (payload.category as string).toUpperCase() as any;
+  }
+
   if (payload.title) {
     payload.slug = generateSlug(payload.title);
     const existing = await Project.findOne({ slug: payload.slug, _id: { $ne: id } });
