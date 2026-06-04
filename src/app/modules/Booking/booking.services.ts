@@ -4,9 +4,49 @@ import { Booking, BookingSlot } from './booking.model';
 import AppError from '../../error/AppError';
 import { BOOKING_STATUS } from './booking.constant';
 import { sendBookingConfirmationEmail } from '../../utils/bookingEmail';
+import { sendBookingEmails } from '../../utils/inquiryEmail';
+import { SiteSettings } from '../SiteSettings/siteSettings.model';
+import config from '../../../config';
 
 // ── Booking CRUD ──
-const createBooking = async (payload: Partial<TBooking>): Promise<TBooking> => Booking.create(payload);
+const createBooking = async (payload: Partial<TBooking>): Promise<TBooking> => {
+  const result = await Booking.create(payload);
+
+  // Fire-and-forget: send booking notification emails in background
+  (async () => {
+    try {
+      const settings = await SiteSettings.findOne().lean();
+      const adminEmail =
+        settings?.notificationEmail ||
+        settings?.contactEmail ||
+        config.admin_email ||
+        '';
+
+      const reference = result._id?.toString().slice(-6).toUpperCase() || 'BOOKING';
+      const dateLabel = new Date(result.date).toLocaleDateString('en-GB', {
+        day: '2-digit', month: 'short', year: 'numeric',
+      });
+      const timeLabel = `${result.startTime} – ${result.endTime}`;
+
+      if (result.clientEmail && adminEmail) {
+        await sendBookingEmails(result.clientEmail, adminEmail, {
+          clientName: result.clientName,
+          clientEmail: result.clientEmail,
+          clientPhone: result.clientPhone,
+          reference,
+          dateLabel,
+          timeLabel,
+          timezone: result.timezone,
+          notes: result.notes,
+        });
+      }
+    } catch (err) {
+      console.error('❌ Booking email background task failed:', err);
+    }
+  })();
+
+  return result;
+};
 
 const getAllBookings = async (query: any) => {
   const { status, date, page = 1, limit = 20, sortBy = 'date', sortOrder = 'desc' } = query;

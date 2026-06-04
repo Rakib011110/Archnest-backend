@@ -9,6 +9,7 @@ const siteSettingsSchema = new Schema<TSiteSettings, ISiteSettingsModel>(
     logoDark: { type: String },
     heroVideoUrl: { type: String },
     contactEmail: { type: String, default: '' },
+    notificationEmail: { type: String, default: '' },
     contactPhone: { type: String, default: '' },
     officeAddress: { type: String, default: '' },
     googleMapsEmbed: { type: String },

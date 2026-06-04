@@ -19,6 +19,7 @@ export interface TSiteSettings {
   logoDark?: string;
   heroVideoUrl?: string;
   contactEmail: string;
+  notificationEmail?: string;
   contactPhone: string;
   officeAddress: string;
   googleMapsEmbed?: string;

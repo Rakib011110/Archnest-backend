@@ -21,7 +21,7 @@ export const PROJECT_STATUS = {
 } as const;
 
 export type TProjectMarket = keyof typeof PROJECT_MARKET;
-export type TProjectCategory = keyof typeof PROJECT_CATEGORY;
+export type TProjectCategory = string;
 export type TProjectStatus = keyof typeof PROJECT_STATUS;
 
 export const PROJECT_SEARCHABLE_FIELDS = ['title', 'clientName', 'location', 'country'];

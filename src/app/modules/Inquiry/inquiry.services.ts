@@ -3,8 +3,39 @@ import { TInquiry } from './inquiry.interface';
 import { Inquiry } from './inquiry.model';
 import AppError from '../../error/AppError';
 import { INQUIRY_SEARCHABLE_FIELDS } from './inquiry.constant';
+import { SiteSettings } from '../SiteSettings/siteSettings.model';
+import { sendInquiryEmails } from '../../utils/inquiryEmail';
+import config from '../../../config';
 
-const create = async (payload: Partial<TInquiry>): Promise<TInquiry> => Inquiry.create(payload);
+const create = async (payload: Partial<TInquiry>): Promise<TInquiry> => {
+  const result = await Inquiry.create(payload);
+
+  // Fire-and-forget: send emails in background (never blocks response)
+  (async () => {
+    try {
+      const settings = await SiteSettings.findOne().lean();
+      const adminEmail =
+        settings?.notificationEmail ||
+        settings?.contactEmail ||
+        config.admin_email ||
+        '';
+
+      if (result.email && adminEmail) {
+        await sendInquiryEmails(result.email, adminEmail, {
+          name: result.name,
+          email: result.email,
+          phone: result.phone,
+          projectType: result.projectType,
+          message: result.message,
+        });
+      }
+    } catch (err) {
+      console.error('❌ Inquiry email background task failed:', err);
+    }
+  })();
+
+  return result;
+};
 
 const getAll = async (query: any) => {
   const { searchTerm, status, page = 1, limit = 20, sortBy = 'createdAt', sortOrder = 'desc' } = query;

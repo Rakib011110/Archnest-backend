@@ -67,5 +67,5 @@ export type InquiryStatus = (typeof INQUIRY_STATUS)[keyof typeof INQUIRY_STATUS]
 export type BookingStatus = (typeof BOOKING_STATUS)[keyof typeof BOOKING_STATUS];
 export type GalleryItemType = (typeof GALLERY_ITEM_TYPE)[keyof typeof GALLERY_ITEM_TYPE];
 export type ProjectMarket = (typeof PROJECT_MARKET)[keyof typeof PROJECT_MARKET];
-export type ProjectCategory = (typeof PROJECT_CATEGORY)[keyof typeof PROJECT_CATEGORY];
+export type ProjectCategory = string;
 export type BudgetRange = (typeof BUDGET_RANGE)[keyof typeof BUDGET_RANGE];

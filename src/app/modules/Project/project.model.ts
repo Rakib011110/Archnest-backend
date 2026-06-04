@@ -25,7 +25,7 @@ const projectSchema = new Schema<TProject, IProjectModel>(
     country: { type: String, required: true },
     year: { type: Number, required: true },
     market: { type: String, required: true, enum: Object.values(PROJECT_MARKET) },
-    category: { type: String, required: true, enum: Object.values(PROJECT_CATEGORY) },
+    category: { type: String, required: true },
     serviceType: { type: Schema.Types.ObjectId, ref: 'Service', required: true },
     area: { type: String },
     description: { type: String, required: true },

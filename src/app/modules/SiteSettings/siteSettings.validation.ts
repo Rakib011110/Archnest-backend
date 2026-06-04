@@ -8,6 +8,7 @@ export const updateSiteSettingsValidation = z.object({
     logoDark: z.string().optional(),
     heroVideoUrl: z.string().optional(),
     contactEmail: z.string().email().optional(),
+    notificationEmail: z.string().email().optional(),
     contactPhone: z.string().optional(),
     officeAddress: z.string().optional(),
     googleMapsEmbed: z.string().optional(),
