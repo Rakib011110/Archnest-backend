@@ -15,8 +15,8 @@ export const uploadImage = catchAsync(async (req, res) => {
     });
   }
 
-  // Get local file path
-  const imageUrl = `/uploads/banner/${req.file.filename}`;
+  // Get local file path (served from `/uploads/banners` — see multer config)
+  const imageUrl = `/uploads/banners/${req.file.filename}`;
 
   console.log('✅ [Banner] Image uploaded successfully:', {
     filename: req.file.filename,
@@ -34,6 +34,37 @@ export const uploadImage = catchAsync(async (req, res) => {
   });
 });
 
+export const uploadVideo = catchAsync(async (req, res) => {
+  console.log('🎬 [Banner] Video upload request received');
+
+  if (!req.file) {
+    console.log('❌ [Banner] No video file uploaded');
+    return sendResponse(res, {
+      statusCode: 400,
+      success: false,
+      message: 'No video file uploaded',
+      data: null,
+    });
+  }
+
+  const videoUrl = `/uploads/banners/${req.file.filename}`;
+
+  console.log('✅ [Banner] Video uploaded successfully:', {
+    filename: req.file.filename,
+    originalname: req.file.originalname,
+    size: req.file.size,
+    mimetype: req.file.mimetype,
+    path: videoUrl,
+  });
+
+  sendResponse(res, {
+    statusCode: 200,
+    success: true,
+    message: 'Video uploaded successfully',
+    data: { videoPath: videoUrl },
+  });
+});
+
 export const createBanner = catchAsync(async (req, res) => {
   const result = await BannerService.createBanner(req.body);
   sendResponse(res, {
@@ -46,6 +77,17 @@ export const createBanner = catchAsync(async (req, res) => {
 
 export const getAllBanners = catchAsync(async (_req, res) => {
   const result = await BannerService.getAllBanners();
+  sendResponse(res, {
+    statusCode: 200,
+    success: true,
+    message: 'Banners fetched successfully',
+    data: result,
+  });
+});
+
+// Admin: returns every banner (active + inactive) for management
+export const getAllBannersAdmin = catchAsync(async (_req, res) => {
+  const result = await BannerService.getAllBannersForAdmin();
   sendResponse(res, {
     statusCode: 200,
     success: true,

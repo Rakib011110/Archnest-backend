@@ -13,7 +13,11 @@ const bannerSchema = new Schema<TBanner, IBannerModel>(
     },
     imageUrl: {
       type: String,
-      required: true,
+      required: false,
+    },
+    videoUrl: {
+      type: String,
+      required: false,
     },
     altText: {
       type: String,

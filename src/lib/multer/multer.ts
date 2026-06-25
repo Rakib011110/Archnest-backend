@@ -63,6 +63,19 @@ const imageFilter = (
   }
 };
 
+/** Accept video files only (mp4, webm, ogg, quicktime) */
+const videoFilter = (
+  _req: Request,
+  file: Express.Multer.File,
+  cb: multer.FileFilterCallback
+) => {
+  if (file.mimetype.startsWith('video/')) {
+    cb(null, true);
+  } else {
+    cb(new Error('Only video files are allowed!'));
+  }
+};
+
 /** Accept images + PDF documents */
 const documentFilter = (
   _req: Request,
@@ -101,6 +114,13 @@ export const uploadBannerImage = multer({
   storage: createStorage(UPLOAD_DIRS.banners, 'banner'),
   fileFilter: imageFilter,
   limits: { fileSize: 5 * 1024 * 1024 },
+});
+
+/** Banner videos — single video, 50MB */
+export const uploadBannerVideo = multer({
+  storage: createStorage(UPLOAD_DIRS.banners, 'banner-video'),
+  fileFilter: videoFilter,
+  limits: { fileSize: 50 * 1024 * 1024 },
 });
 
 /** Service images — single image, 5MB */

@@ -11,6 +11,12 @@ const getAllBanners = async () => {
   return result;
 };
 
+// Admin: every banner regardless of active state
+const getAllBannersForAdmin = async () => {
+  const result = await Banner.find().sort({ order: 1, createdAt: -1 });
+  return result;
+};
+
 const getBannerById = async (id: string) => {
   const result = await Banner.findById(id);
   return result;
@@ -29,6 +35,7 @@ const deleteBanner = async (id: string) => {
 export const BannerService = {
   createBanner,
   getAllBanners,
+  getAllBannersForAdmin,
   getBannerById,
   updateBanner,
   deleteBanner,
