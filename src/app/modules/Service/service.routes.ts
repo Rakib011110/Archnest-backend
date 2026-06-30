@@ -10,6 +10,12 @@ import { uploadServiceImage } from '../../../lib/multer/multer';
 
 const router = Router();
 
+// The wizard can upload both a hero image and a thumbnail in one request.
+const serviceImageFields = uploadServiceImage.fields([
+  { name: 'heroImage', maxCount: 1 },
+  { name: 'thumbnailImage', maxCount: 1 },
+]);
+
 // Public routes
 router.get('/', ServiceController.getAllServices);
 router.get('/slug/:slug', ServiceController.getServiceBySlug);
@@ -19,14 +25,14 @@ router.get('/:id', ServiceController.getServiceById);
 router.post(
   '/',
   auth(USER_ROLE.ADMIN, USER_ROLE.EDITOR),
-  uploadServiceImage.single('heroImage'),
+  serviceImageFields,
   ServiceController.createService
 );
 
 router.patch(
   '/:id',
   auth(USER_ROLE.ADMIN, USER_ROLE.EDITOR),
-  uploadServiceImage.single('heroImage'),
+  serviceImageFields,
   ServiceController.updateService
 );
 

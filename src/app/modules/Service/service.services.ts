@@ -29,6 +29,7 @@ const getAllServices = async (query: TServiceQuery) => {
   const {
     searchTerm,
     isActive,
+    isFeatured,
     page = 1,
     limit = 20,
     sortBy = 'serviceNumber',
@@ -47,6 +48,10 @@ const getAllServices = async (query: TServiceQuery) => {
   // Filter
   if (isActive !== undefined) {
     filter.isActive = isActive;
+  }
+
+  if (isFeatured !== undefined) {
+    filter.isFeatured = isFeatured;
   }
 
   const skip = (Number(page) - 1) * Number(limit);
